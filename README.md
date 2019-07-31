@@ -1,2 +1,2 @@
-# url-shortener
-Simple URL shortener that redirects to the full URL
+# URL shortener
+A simple URL shortener that redirects to the full URL
