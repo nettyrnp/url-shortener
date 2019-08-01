@@ -1,7 +1,9 @@
-package service
+package http_service
 
 import (
+	"context"
 	"github.com/gorilla/websocket"
+	"github.com/nettyrnp/url-shortener/config"
 	"log"
 	"net/http"
 	"strings"
@@ -13,7 +15,7 @@ const (
 )
 
 var (
-	// Allowed actions and their short versions
+	// Allowed values for 'action' (e.g. '/v1/{action}/...') and their short versions
 	FullToShortMap = map[string]string{
 		"login":        "lgn",
 		"authenticate": "thntct",
@@ -30,20 +32,25 @@ var (
 	}
 )
 
-func reverse(m1 map[string]string) map[string]string {
-	m2 := map[string]string{}
-	for key, value := range m1 {
-		m2[value] = key
+func reverse(m map[string]string) map[string]string {
+	newMap := map[string]string{}
+	for key, value := range m {
+		newMap[value] = key
 	}
-	return m2
+	return newMap
 }
 
-type app struct {
+func NewHTTPService(ctx context.Context, conf config.HTTPConfig) (*HTTPService, error) {
+	return &HTTPService{HTTPConfig: conf}, nil
+}
+
+type HTTPService struct {
+	config.HTTPConfig
 	socket *websocket.Conn
 	sendCh chan []byte
 }
 
-func (a *app) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (a *HTTPService) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	sock, err := upgrader.Upgrade(w, req, nil)
 	if err != nil {
 		log.Fatal("ServeHTTP:", err)
@@ -58,7 +65,7 @@ func (a *app) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	a.write()
 }
 
-func (a *app) read() {
+func (a *HTTPService) read() {
 	defer a.socket.Close()
 	for {
 		_, msg, err := a.socket.ReadMessage()
@@ -69,7 +76,7 @@ func (a *app) read() {
 	}
 }
 
-func (a *app) write() {
+func (a *HTTPService) write() {
 	defer a.socket.Close()
 	for msg := range a.sendCh {
 		err := a.socket.WriteMessage(websocket.TextMessage, msg)
@@ -79,12 +86,11 @@ func (a *app) write() {
 	}
 }
 
-func shorten(msg []byte) []byte {
-	parts := strings.SplitN(string(msg), "/", 2)
+func shorten(url []byte) []byte {
+	parts := strings.SplitN(string(url), "/", 2)
 	head := parts[0]
 	tail := parts[1]
-	short := deleteVowels(head)
-	return []byte(short + "/" + tail)
+	return []byte(deleteVowels(head) + "/" + tail)
 }
 
 func deleteVowels(str string) string {
@@ -92,8 +98,4 @@ func deleteVowels(str string) string {
 		str = strings.ReplaceAll(str, s, "")
 	}
 	return str
-}
-
-func NewApp() *app {
-	return &app{}
 }
