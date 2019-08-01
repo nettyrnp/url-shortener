@@ -61,7 +61,6 @@ var _ = Describe("Service", func() {
 		Describe("getRoot", func() {
 			BeforeEach(func() {
 				uri = "/"
-				//uri = "/v1/login/john"
 				request, err = buildRequest("GET", uri, nil)
 			})
 
