@@ -1,7 +1,7 @@
 package http_service_test
 
 import (
-	//"github.com/nettyrnp/url-shortener/http_service"
+	//"github.com/nettyrnp/url-shortener/http"
 	"github.com/nettyrnp/url-shortener/router"
 	"io"
 	"net/http"
@@ -26,7 +26,7 @@ func buildRequest(method string, uri string, reader io.Reader) (*http.Request, e
 var _ = Describe("Service", func() {
 	var (
 		//conf  config.HTTPConfig
-		//service *http_service.HTTPService
+		//service *http.HTTPService
 		//err     error
 		//ctx context.Context
 		h1 *router.RootHandler

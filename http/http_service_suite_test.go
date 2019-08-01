@@ -1,7 +1,5 @@
 package http_service_test
 
-//package http_service
-
 import (
 	"testing"
 

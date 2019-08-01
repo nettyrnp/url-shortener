@@ -19,7 +19,7 @@ func NewDBStorageService(ctx context.Context, storageConfig config.StorageConfig
 		StorageConfig: storageConfig,
 	}
 	if err := dbs.initializeDatabase(ctx); err != nil {
-		return nil, errors.Wrap(err, "initialize DB http_service.")
+		return nil, errors.Wrap(err, "initialize DB http.")
 	}
 	return dbs, nil
 }
