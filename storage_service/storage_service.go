@@ -2,7 +2,6 @@ package storage_service
 
 import (
 	"context"
-	_ "github.com/lib/pq"
 	"github.com/nettyrnp/url-shortener/config"
 	"github.com/pkg/errors"
 )
@@ -20,7 +19,7 @@ func NewDBStorageService(ctx context.Context, storageConfig config.StorageConfig
 		StorageConfig: storageConfig,
 	}
 	if err := dbs.initializeDatabase(ctx); err != nil {
-		return nil, errors.Wrap(err, "initialize DB service.")
+		return nil, errors.Wrap(err, "initialize DB http_service.")
 	}
 	return dbs, nil
 }

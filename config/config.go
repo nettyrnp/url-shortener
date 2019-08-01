@@ -89,11 +89,11 @@ func initConfig() (*Config, error) {
 	// HTTP
 	flagset.StringVar(&config.HTTP.Host, "host", defaultHost, "Host part of listening address.")
 	flagset.IntVar(&config.HTTP.Port, "port", defaultPort, "Listening port.")
-	flagset.DurationVar(&config.HTTP.ShutdownTimeout, "shutdown-timeout", defaultShutdownTimeout, "Shutdown timeout for http service.")
+	flagset.DurationVar(&config.HTTP.ShutdownTimeout, "shutdown-timeout", defaultShutdownTimeout, "Shutdown timeout for http http_service.")
 
 	//DB
-	flagset.StringVar(&config.Storage.Driver, "db-driver", defaultDBDriver, "Data service driver.")
-	flagset.StringVar(&config.Storage.DSN, "db-dsn", defaultDSN, "Data service data source name.")
+	flagset.StringVar(&config.Storage.Driver, "db-driver", defaultDBDriver, "Data http_service driver.")
+	flagset.StringVar(&config.Storage.DSN, "db-dsn", defaultDSN, "Data http_service data source name.")
 
 	if err := flagset.Parse(os.Args[1:]); err != nil {
 		return nil, errors.Wrap(err, "parsing flags")

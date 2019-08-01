@@ -2,8 +2,8 @@ package router
 
 import (
 	"fmt"
+	http_service "github.com/nettyrnp/url-shortener/http_service"
 	"github.com/nettyrnp/url-shortener/log"
-	http_service "github.com/nettyrnp/url-shortener/service"
 	"html/template"
 	"net/http"
 	"path/filepath"
@@ -48,7 +48,8 @@ type RootHandler struct {
 
 func (t *RootHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	t.once.Do(func() {
-		t.templ = template.Must(template.ParseFiles(filepath.Join("templates", t.Filename)))
+		t.templ = template.Must(template.ParseFiles(filepath.Join("", t.Filename)))
+		//t.templ = template.Must(template.ParseFiles(filepath.Join("http_service/templates", t.Filename)))
 	})
 	t.templ.Execute(w, r)
 }
