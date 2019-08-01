@@ -10,6 +10,10 @@ import (
 	"io"
 )
 
+const (
+	dbfile = "storage/db.csv"
+)
+
 var (
 	// List of allowed values of 'action' (in route '/v1/{action}/...') together with their short versions
 	FullToShortMap map[string]string
@@ -32,8 +36,6 @@ func NewDBStorageService(ctx context.Context, storageConfig config.StorageConfig
 }
 
 func (dbs *StorageService) initializeDatabase(ctx context.Context) error {
-	dbfile := "storage/db.csv"
-	//dbfile := "db.csv"
 	FullToShortMap = dbFromCsv("FULL", "SHORT", dbfile)
 	ShortToFullMap = dbFromCsv("SHORT", "FULL", dbfile)
 	return nil
@@ -63,13 +65,11 @@ func dbFromCsv(id1, id2, filename string) map[string]string {
 
 func toMap(idField, fname string) (map[string]map[string]string, error) {
 	text, err := util.ReadFile(fname)
-	//fmt.Printf(">> text: \n%v\n\n", text)
 	if err != nil {
 		return nil, err
 	}
 	buf := bytes.NewBufferString(text)
 	arr := CSVToMap(buf)
-	//fmt.Printf(">> arr.len: %v\n", len(arr))
 
 	m, err := arrToMap(idField, arr)
 	if err != nil {
