@@ -82,7 +82,7 @@ var _ = Describe("Service", func() {
 			})
 		})
 
-		Describe("getGeneric", func() {
+		Describe("getGeneric 200", func() {
 			BeforeEach(func() {
 				uri = "/v1/login/john"
 				request, err = buildRequest("GET", uri, nil)
@@ -100,6 +100,54 @@ var _ = Describe("Service", func() {
 			})
 			It("should return 200 OK", func() {
 				Ω(recorder.Code).Should(Equal(http.StatusOK))
+			})
+			It("should have the correct Content-Type", func() {
+				Ω(recorder.HeaderMap.Get("Content-Type")).Should(Equal("text/html; charset=utf-8"))
+			})
+		})
+
+		Describe("getGeneric 404", func() {
+			BeforeEach(func() {
+				uri = "/v1/lgnXXX/john"
+				request, err = buildRequest("GET", uri, nil)
+			})
+
+			Measure("it should getGeneric efficiently", func(b Benchmarker) {
+				runtime := b.Time("runtime", func() {
+					h2.ServeHTTP(recorder, request)
+				})
+				Ω(runtime.Seconds()).Should(BeNumerically("<", 0.2), "getGeneric() shouldn't take too long.")
+			}, 50)
+
+			It("should not return an error", func() {
+				Ω(err).Should(BeNil())
+			})
+			It("should return 404 Not Found", func() {
+				Ω(recorder.Code).Should(Equal(http.StatusNotFound))
+			})
+			It("should have the correct Content-Type", func() {
+				Ω(recorder.HeaderMap.Get("Content-Type")).Should(Equal("text/html; charset=utf-8"))
+			})
+		})
+
+		Describe("getGeneric 302", func() {
+			BeforeEach(func() {
+				uri = "/v1/lgn/john"
+				request, err = buildRequest("GET", uri, nil)
+			})
+
+			Measure("it should getGeneric efficiently", func(b Benchmarker) {
+				runtime := b.Time("runtime", func() {
+					h2.ServeHTTP(recorder, request)
+				})
+				Ω(runtime.Seconds()).Should(BeNumerically("<", 0.2), "getGeneric() shouldn't take too long.")
+			}, 50)
+
+			It("should not return an error", func() {
+				Ω(err).Should(BeNil())
+			})
+			It("should return 302 Redirected", func() {
+				Ω(recorder.Code).Should(Equal(http.StatusFound))
 			})
 			It("should have the correct Content-Type", func() {
 				Ω(recorder.HeaderMap.Get("Content-Type")).Should(Equal("text/html; charset=utf-8"))

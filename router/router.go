@@ -27,13 +27,15 @@ func (t *SvcHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if len(parts) > 4 {
 			tail = "/" + parts[4]
 		}
-		if full, ok := http_service.ShortToFullMap[action]; ok {
-			shortURL := "/v1/" + full + "/" + username + tail
-			w.Header().Set("Location", shortURL)
-			w.WriteHeader(http.StatusFound)
-		} else if _, ok := http_service.FullToShortMap[action]; ok {
+
+		if full, ok := http_service.ShortToFullMap[action]; ok { // When action is a short version of an allowed action
+			newURL := "/v1/" + full + "/" + username + tail
+			http.Redirect(w, r, newURL, http.StatusFound)
+
+		} else if _, ok := http_service.FullToShortMap[action]; ok { // When action is a full allowed action
 			logger.Infof("User %v tried to %v", username, action)
-		} else {
+
+		} else { // When action is unknown
 			w.WriteHeader(http.StatusNotFound)
 			fmt.Fprintf(w, "Page '%v' not found", r.URL.Path)
 		}
@@ -49,7 +51,6 @@ type RootHandler struct {
 func (t *RootHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	t.once.Do(func() {
 		t.templ = template.Must(template.ParseFiles(filepath.Join("", t.Filename)))
-		//t.templ = template.Must(template.ParseFiles(filepath.Join("http/templates", t.Filename)))
 	})
 	t.templ.Execute(w, r)
 }
