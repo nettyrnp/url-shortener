@@ -15,7 +15,7 @@ const (
 )
 
 var (
-	// Allowed values for 'action' (e.g. '/v1/{action}/...') and their short versions
+	// List of allowed values for 'action' (in route '/v1/{action}/...') and their short versions
 	FullToShortMap = map[string]string{
 		"login":        "lgn",
 		"authenticate": "thntct",
