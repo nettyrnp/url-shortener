@@ -15,15 +15,6 @@ const (
 )
 
 var (
-	// List of allowed values for 'action' (in route '/v1/{action}/...') and their short versions
-	FullToShortMap = map[string]string{
-		"login":        "lgn",
-		"authenticate": "thntct",
-		"register":     "rgstr",
-		"discover":     "dscvr",
-	}
-	ShortToFullMap = reverse(FullToShortMap)
-
 	vowels = strings.Split("aeoiu", "")
 
 	upgrader = &websocket.Upgrader{
@@ -31,14 +22,6 @@ var (
 		WriteBufferSize: socketBufferSize,
 	}
 )
-
-func reverse(m map[string]string) map[string]string {
-	newMap := map[string]string{}
-	for key, value := range m {
-		newMap[value] = key
-	}
-	return newMap
-}
 
 func NewHTTPService(ctx context.Context, conf config.HTTPConfig) (*HTTPService, error) {
 	return &HTTPService{HTTPConfig: conf}, nil

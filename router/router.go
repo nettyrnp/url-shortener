@@ -2,8 +2,8 @@ package router
 
 import (
 	"fmt"
-	http_service "github.com/nettyrnp/url-shortener/http"
 	"github.com/nettyrnp/url-shortener/log"
+	"github.com/nettyrnp/url-shortener/storage"
 	"html/template"
 	"net/http"
 	"path/filepath"
@@ -28,11 +28,11 @@ func (t *SvcHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			tail = "/" + parts[4]
 		}
 
-		if full, ok := http_service.ShortToFullMap[action]; ok { // When action is a short version of an allowed action
+		if full, ok := storage_service.ShortToFullMap[action]; ok { // When action is a short version of an allowed action
 			newURL := "/v1/" + full + "/" + username + tail
 			http.Redirect(w, r, newURL, http.StatusFound)
 
-		} else if _, ok := http_service.FullToShortMap[action]; ok { // When action is a full allowed action
+		} else if _, ok := storage_service.FullToShortMap[action]; ok { // When action is a full allowed action
 			logger.Infof("User %v tried to %v", username, action)
 
 		} else { // When action is unknown
